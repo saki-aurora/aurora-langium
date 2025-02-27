@@ -49,10 +49,34 @@ ClinicalValue:
 ;
 
 /* Value Unit */
-SingleValueUnit :
+// SingleValueUnit :
+//     negative='(-)' ?
+//     value=(ID | INT | Float | Fraction | Boolean  )
+//     unit=(ID | INT | Float | Fraction | Boolean | '_'  )
+// ;
+
+
+SingleValueUnit:
     negative='(-)' ?
-    value=(ID | INT | Float | Fraction | Boolean  )
-    unit=(ID | INT | Float | Fraction | Boolean | '_'  )
+    value=AdditiveExpression 
+    unit=(ID | INT | Float | Fraction | Boolean | '_')
+;
+
+AdditiveExpression:
+    MultiplicativeExpression
+    (op=('+' | '-') right=MultiplicativeExpression)*
+;
+
+
+MultiplicativeExpression:
+    AtomicExpression
+    (op=('*' | '/') right=AtomicExpression)*
+;
+
+
+AtomicExpression:
+    '(' AdditiveExpression ')'  
+    | value=(ID | INT | Float | Fraction | Boolean)  
 ;
 
 Fraction returns string: INT '/' INT;
