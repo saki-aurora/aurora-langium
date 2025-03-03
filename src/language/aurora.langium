@@ -57,27 +57,20 @@ ClinicalValue:
 
 
 SingleValueUnit:
-    negative='(-)' ?
-    value=AdditiveExpression 
-    unit=(ID | INT | Float | Fraction | Boolean | '_')
-;
+    '{' AdditiveExpression '}';  
 
 AdditiveExpression:
     MultiplicativeExpression
-    (op=('+' | '-') right=MultiplicativeExpression)*
-;
-
+    (op=('+' | '-') right=MultiplicativeExpression)*;
 
 MultiplicativeExpression:
     AtomicExpression
-    (op=('*' | '/') right=AtomicExpression)*
-;
-
+    (op=('*' | '/') right=AtomicExpression)*;
 
 AtomicExpression:
     '(' AdditiveExpression ')'  
-    | value=(ID | INT | Float | Fraction | Boolean)  
-;
+    | value=(ID | INT | Float | Fraction | Boolean);  
+
 
 Fraction returns string: INT '/' INT;
 Boolean returns string: 'y' | 'n' ;
