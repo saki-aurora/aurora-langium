@@ -56,21 +56,65 @@ ClinicalValue:
 // ;
 
 
-SingleValueUnit:
-    '{' AdditiveExpression '}';  
 
+// Enhanced Arithmetic and Conditional Expressions
+SingleValueUnit:
+    '{' ConditionalExpression '}';  
+
+// New Conditional Expression
+ConditionalExpression:
+    LogicalOrExpression
+    ('?' ConditionalExpression ':' ConditionalExpression)?;
+
+// Logical OR Expression
+LogicalOrExpression:
+    LogicalAndExpression
+    (op='||' right=LogicalAndExpression)*;
+
+// Logical AND Expression
+LogicalAndExpression:
+    EqualityExpression
+    (op='&&' right=EqualityExpression)*;
+
+// Equality Expression (==, !=)
+EqualityExpression:
+    RelationalExpression
+    (op=('==' | '!=') right=RelationalExpression)*;
+
+// Relational Expression (<, >, <=, >=)
+RelationalExpression:
+    AdditiveExpression
+    (op=('<' | '>' | '<=' | '>=') right=AdditiveExpression)*;
+
+// Additive Expression (existing, slightly modified)
 AdditiveExpression:
     MultiplicativeExpression
     (op=('+' | '-') right=MultiplicativeExpression)*;
 
+// Multiplicative Expression (existing, slightly modified)
 MultiplicativeExpression:
-    AtomicExpression
-    (op=('*' | '/') right=AtomicExpression)*;
+    UnaryExpression
+    (op=('*' | '/' | '%') right=UnaryExpression)*;
 
+// Unary Expression (added support for unary operators)
+UnaryExpression:
+    (op=('!' | '-' | '+'))? AtomicExpression;
+
+// Atomic Expression (enhanced)
 AtomicExpression:
-    '(' AdditiveExpression ')'  
-    | value=(ID | INT | Float | Fraction | Boolean);  
+    '(' ConditionalExpression ')'  
+    | value=(
+        ID 
+        | INT 
+        | Float 
+        | Fraction 
+        | Boolean
+        | StringLiteral
+    );
 
+// Added String Literal
+StringLiteral returns string:
+    '"' /[^"]*/ '"';
 
 Fraction returns string: INT '/' INT;
 Boolean returns string: 'y' | 'n' ;
