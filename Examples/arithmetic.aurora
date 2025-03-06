@@ -1,11 +1,26 @@
-Issues:
+// Basic arithmetic operations
+def a: 10;
+def b: 5;
+def sum: a + b;
+def difference: a - b;
+def product: a * b;
+def quotient: a / b;
 
-MathOperations (
-  Addition: {5 + 3}
-  Subtraction: {10 - 4}
-  Multiplication: {6 * 7}
-  Division: {20 / 5}
-  ComplexExpression: {(4 + 2) * (10 - 3)}
-  FractionCalculation: {1/2 + 3/4}
-  NestedCalculation: {5 + (3 * 2 - 1)}
-)
+// Comparison operations
+def isEqual: a == b;
+def isNotEqual: a != b;
+def isGreater: a > b;
+def isLess: a < b;
+
+// Conditional expressions
+def max: (a > b) ? a : b;
+def min: (a < b) ? a : b;
+def absoluteDifference: (a > b) ? (a - b) : (b - a);
+
+// Boolean values
+def trueValue: true;
+def falseValue: false;
+
+// Complex expressions
+def complex: (a > 0 && b > 0) ? (a * b) : (a + b);
+def nested: (isEqual) ? 0 : ((isGreater) ? a : b);

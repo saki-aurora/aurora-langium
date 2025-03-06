@@ -9,6 +9,8 @@ import { NodeFileSystem } from 'langium/node';
 import * as url from 'node:url';
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
+import { evaluate } from './interpreter.js';
+
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 const packagePath = path.resolve(__dirname, '..', '..', 'package.json');
@@ -40,6 +42,43 @@ export const parseAction = async (fileName: string): Promise<void> => {
     console.log(JSON.stringify(parsed.value, null, 2)); // Output the AST as formatted JSON
 };
 
+// New function to evaluate the Aurora program
+export const evaluateAction = async (fileName: string): Promise<void> => {
+    const services = createAuroraServices(NodeFileSystem).Aurora;
+    const document = await extractDocument(fileName, services);
+    
+    // Check for parser errors
+    if (document.parseResult.parserErrors.length > 0) {
+        console.error(chalk.red('Parsing errors:'));
+        for (const error of document.parseResult.parserErrors) {
+            console.error(chalk.red(`  ${error.message}`));
+        }
+        process.exit(1);
+    }
+
+    // Check for validation errors
+    const validationErrors = (document.diagnostics ?? []).filter(e => e.severity === 1);
+    if (validationErrors.length > 0) {
+        console.error(chalk.red('Validation errors:'));
+        for (const error of validationErrors) {
+            console.error(chalk.red(`  Line ${error.range.start.line + 1}: ${error.message}`));
+        }
+        process.exit(1);
+    }
+
+    // Evaluate the document
+    try {
+        const results = evaluate(document);
+        console.log(chalk.green('Evaluation results:'));
+        for (const [name, value] of Object.entries(results)) {
+            console.log(`  ${name} = ${value}`);
+        }
+    } catch (error) {
+        console.error(chalk.red('Evaluation error:'), error instanceof Error ? error.message : 'Unknown error');
+        process.exit(1);
+    }
+};
+
 export default function(): void {
     const program = new Command();
 
@@ -59,6 +98,13 @@ export default function(): void {
         .argument('<file>', `source file (possible file extensions: ${fileExtensions})`)
         .description('parses the source file and outputs the AST as JSON')
         .action(parseAction);
+        
+    // Add the new evaluate command
+    program
+        .command('evaluate')
+        .argument('<file>', `source file (possible file extensions: ${fileExtensions})`)
+        .description('evaluates the Aurora program and displays the results of all definitions')
+        .action(evaluateAction);
 
     program.parse(process.argv);
 }
