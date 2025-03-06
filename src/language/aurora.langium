@@ -112,9 +112,6 @@ AtomicExpression:
         | StringLiteral
     );
 
-// Added String Literal
-StringLiteral returns string:
-    '"' /[^"]*/ '"';
 
 Fraction returns string: INT '/' INT;
 Boolean returns string: 'y' | 'n' ;
@@ -189,3 +186,4 @@ terminal ML_COMMENT returns string:'/*'  -> '*/'  ;
 terminal SL_COMMENT returns string:'//'  !('\n' | '\r' )('\r'? '\n' )?  ;
 hidden terminal WS: /\s+/;
 terminal QUTERMINAL returns string:('?' | '!' | '*' | '~' );
+terminal StringLiteral returns string: '"' -> '"';
