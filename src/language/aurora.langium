@@ -121,3 +121,4 @@ terminal ML_COMMENT returns string:'/*'  -> '*/'  ;
 terminal SL_COMMENT returns string:'//'  !('\n' | '\r' )('\r'? '\n' )?  ;
 hidden terminal WS: /\s+/;
 terminal QUTERMINAL returns string:('?' | '!' | '*' | '~' );
+terminal StringLiteral returns string: '"' -> '"';
