@@ -1,5 +1,7 @@
 grammar Aurora
 
+import "./arithmetic";
+
 entry PCM:
     package=PACKAGE ?
     imports+=Import *
@@ -48,77 +50,7 @@ ClinicalValue:
     narrative+=NL_STATEMENT *
 ;
 
-/* Value Unit */
-// SingleValueUnit :
-//     negative='(-)' ?
-//     value=(ID | INT | Float | Fraction | Boolean  )
-//     unit=(ID | INT | Float | Fraction | Boolean | '_'  )
-// ;
 
-
-
-// Enhanced Arithmetic and Conditional Expressions
-SingleValueUnit:
-    '{' ConditionalExpression '}';  
-
-// New Conditional Expression
-ConditionalExpression:
-    LogicalOrExpression
-    ('?' ConditionalExpression ':' ConditionalExpression)?;
-
-// Logical OR Expression
-LogicalOrExpression:
-    LogicalAndExpression
-    (op='||' right=LogicalAndExpression)*;
-
-// Logical AND Expression
-LogicalAndExpression:
-    EqualityExpression
-    (op='&&' right=EqualityExpression)*;
-
-// Equality Expression (==, !=)
-EqualityExpression:
-    RelationalExpression
-    (op=('==' | '!=') right=RelationalExpression)*;
-
-// Relational Expression (<, >, <=, >=)
-RelationalExpression:
-    AdditiveExpression
-    (op=('<' | '>' | '<=' | '>=') right=AdditiveExpression)*;
-
-// Additive Expression (existing, slightly modified)
-AdditiveExpression:
-    MultiplicativeExpression
-    (op=('+' | '-') right=MultiplicativeExpression)*;
-
-// Multiplicative Expression (existing, slightly modified)
-MultiplicativeExpression:
-    UnaryExpression
-    (op=('*' | '/' | '%') right=UnaryExpression)*;
-
-// Unary Expression (added support for unary operators)
-UnaryExpression:
-    (op=('!' | '-' | '+'))? AtomicExpression;
-
-// Atomic Expression (enhanced)
-AtomicExpression:
-    '(' ConditionalExpression ')'  
-    | value=(
-        ID 
-        | INT 
-        | Float 
-        | Fraction 
-        | Boolean
-        | StringLiteral
-    );
-
-// Added String Literal
-StringLiteral returns string:
-    '"' /[^"]*/ '"';
-
-Fraction returns string: INT '/' INT;
-Boolean returns string: 'y' | 'n' ;
-Float returns string: INT '.' INT ;
 
 TimeStamp:
     '@' ((empty="time" ) | (date=AuroraDate  | time=Time  )| (date=AuroraDate  time=Time  ) )
@@ -182,9 +114,9 @@ terminal PREFIXMULTI :('--' | '??' | '!!' | '..' | 'xx' );
 
 terminal NL_STATEMENTMULTI returns string: PREFIXMULTI  -> ';'  ;
 terminal ID_WITH_COLON: /[a-zA-Z0-9_]+:/;
-terminal ID: /[a-zA-Z0-9_]+/;
+
 terminal SINGLENL returns string: /-(\??|\.\?|!|x)?([^\n]*)/;
-terminal INT: /[0-9]+/;
+
 terminal ML_COMMENT returns string:'/*'  -> '*/'  ;
 terminal SL_COMMENT returns string:'//'  !('\n' | '\r' )('\r'? '\n' )?  ;
 hidden terminal WS: /\s+/;
