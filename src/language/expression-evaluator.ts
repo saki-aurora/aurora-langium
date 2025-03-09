@@ -6,7 +6,6 @@ import { SingleValueUnit, ConditionalExpression, LogicalOrExpression, LogicalAnd
 @Injectable()
 export class ExpressionEvaluator {
     
-    // Main evaluation entry point
     evaluateSingleValueUnit(expression: SingleValueUnit): any {
         if (expression.conditionalExpression) {
             return this.evaluateConditionalExpression(expression.conditionalExpression);
@@ -156,7 +155,6 @@ export class ExpressionEvaluator {
         if (expression.value !== undefined) {
             const value = expression.value;
             
-            // Handle different value types
             if (typeof value === 'number') {
                 return value;
             } else if (value === 'y') {
@@ -164,13 +162,11 @@ export class ExpressionEvaluator {
             } else if (value === 'n') {
                 return false;
             } else if (typeof value === 'string') {
-                // Try to parse number if possible
                 const num = parseFloat(value);
                 if (!isNaN(num) && /^\d+(\.\d+)?$/.test(value)) {
                     return num;
                 }
                 
-                // Handle fractions
                 if (value.includes('/')) {
                     const [numerator, denominator] = value.split('/').map(n => parseInt(n.trim()));
                     if (denominator === 0) {
@@ -179,7 +175,6 @@ export class ExpressionEvaluator {
                     return numerator / denominator;
                 }
                 
-                // Return as string for other cases
                 return value;
             }
         }

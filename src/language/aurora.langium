@@ -56,51 +56,40 @@ ClinicalValue:
 // ;
 
 
-
-// Enhanced Arithmetic and Conditional Expressions
 SingleValueUnit:
     '{' ConditionalExpression '}';  
 
-// New Conditional Expression
 ConditionalExpression:
     LogicalOrExpression
     ('?' ConditionalExpression ':' ConditionalExpression)?;
 
-// Logical OR Expression
 LogicalOrExpression:
     LogicalAndExpression
     (op='||' right=LogicalAndExpression)*;
 
-// Logical AND Expression
 LogicalAndExpression:
     EqualityExpression
     (op='&&' right=EqualityExpression)*;
 
-// Equality Expression (==, !=)
 EqualityExpression:
     RelationalExpression
     (op=('==' | '!=') right=RelationalExpression)*;
 
-// Relational Expression (<, >, <=, >=)
 RelationalExpression:
     AdditiveExpression
     (op=('<' | '>' | '<=' | '>=') right=AdditiveExpression)*;
 
-// Additive Expression (existing, slightly modified)
 AdditiveExpression:
     MultiplicativeExpression
     (op=('+' | '-') right=MultiplicativeExpression)*;
 
-// Multiplicative Expression (existing, slightly modified)
 MultiplicativeExpression:
     UnaryExpression
     (op=('*' | '/' | '%') right=UnaryExpression)*;
 
-// Unary Expression (added support for unary operators)
 UnaryExpression:
     (op=('!' | '-' | '+'))? AtomicExpression;
 
-// Atomic Expression (enhanced)
 AtomicExpression:
     '(' ConditionalExpression ')'  
     | value=(

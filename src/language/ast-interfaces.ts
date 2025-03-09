@@ -1,5 +1,3 @@
-// Add these interfaces to your generated AST types or create custom extensions
-
 export interface SingleValueUnit {
     conditionalExpression: ConditionalExpression;
 }

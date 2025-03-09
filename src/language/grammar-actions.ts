@@ -8,7 +8,6 @@ import {
 export function registerGrammarActions(services: AuroraServices) {
     const actionsRegistry = services.parser.GrammarActions;
     
-    // Register your actions for each expression type
     actionsRegistry.register(ConditionalExpression, {
         create: (args) => {
             const { logicalOrExpression, thenExpression, elseExpression } = args;
@@ -37,7 +36,6 @@ export function registerGrammarActions(services: AuroraServices) {
         }
     });
     
-    // Similar actions for other expression types...
     
     actionsRegistry.register(UnaryExpression, {
         create: (args) => {
