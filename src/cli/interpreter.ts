@@ -8,23 +8,17 @@ import {
 } from '../language/generated/ast.js';
 import { isDefinition, isNumberLiteral, isBooleanLiteral, isPlusOrMinus, isMultiOrDiv, isReference, isComparison, isConditionalExpression } from '../language/generated/ast.js';
 
-// Type for the evaluation context
 type EvaluationContext = {
     values: Record<string, EvaluationResult>;
 };
 
-// Type for evaluation results that can be either number or boolean
 type EvaluationResult = number | boolean;
 
-/**
- * Main evaluation function for the Aurora language
- * Evaluates an entire document and returns the values of all definitions
- */
+
 export function evaluate(document: LangiumDocument): Record<string, EvaluationResult> {
     const context: EvaluationContext = { values: {} };
     const module = document.parseResult.value as Module;
     
-    // Evaluate all statements in the module
     for (const stmt of module.statements) {
         evaluateStatement(stmt, context);
     }
@@ -32,30 +26,21 @@ export function evaluate(document: LangiumDocument): Record<string, EvaluationRe
     return context.values;
 }
 
-/**
- * Evaluates a single statement
- */
+
 function evaluateStatement(stmt: Statement, context: EvaluationContext): void {
     if (isDefinition(stmt)) {
-        // For definitions, evaluate the expression and store it with the name
         context.values[stmt.name] = evaluateExpression(stmt.expr, context);
     }
-    // Other statement types can be handled here if needed
 }
 
-/**
- * Evaluates any expression and returns its value
- */
+
 function evaluateExpression(expr: Expression, context: EvaluationContext): EvaluationResult {
-    // Number literals
     if (isNumberLiteral(expr)) {
         return expr.value;
     } 
-    // Boolean literals
     else if (isBooleanLiteral(expr)) {
         return expr.value === 'true';
     }
-    // Addition or subtraction
     else if (isPlusOrMinus(expr)) {
         const left = evaluateExpression(expr.left, context) as number;
         const right = evaluateExpression(expr.right, context) as number;
@@ -66,7 +51,6 @@ function evaluateExpression(expr: Expression, context: EvaluationContext): Evalu
             return left - right;
         }
     } 
-    // Multiplication or division
     else if (isMultiOrDiv(expr)) {
         const left = evaluateExpression(expr.left, context) as number;
         const right = evaluateExpression(expr.right, context) as number;
@@ -79,7 +63,7 @@ function evaluateExpression(expr: Expression, context: EvaluationContext): Evalu
             }
             return left / right;
         }
-    } 
+    }
     // Variable references
     else if (isReference(expr)) {
         const refName = getReferenceName(expr);
